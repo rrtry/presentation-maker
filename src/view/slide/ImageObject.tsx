@@ -15,7 +15,8 @@ function ImageObject({imageObject, scale = 1}: ImageObjectProps) {
         height: `${imageObject.height * scale}px`,
     }
     return (
-        <img style={imageObjectStyles} src={`data:image/jpeg;base64, ${imageObject.src}`}/>
+        /* <img style={imageObjectStyles} src={`data:image/jpeg;base64, ${imageObject.src}`}/> */
+        <img style={imageObjectStyles} src={ imageObject.src }/>
     )
 }
 

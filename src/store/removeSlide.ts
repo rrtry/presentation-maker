@@ -11,7 +11,6 @@ function removeSlide(editor: EditorType): EditorType {
 
     const removeSlideId = editor.selection.selectedSlideId
     const removeSlideIndex = editor.presentation.slides.findIndex(slide => slide.id == removeSlideId)
-
     const newSlides = editor.presentation.slides.filter(slide => slide.id != removeSlideId)
 
     let newSelectedSlideId = null
