@@ -1,23 +1,35 @@
 import {ImageObjectType} from "../../store/PresentationType.ts";
 import {CSSProperties} from "react";
+import { useDraggable } from "./useDraggable.tsx";
 
 type ImageObjectProps = {
     imageObject: ImageObjectType,
     scale?: number,
+    onPositionChange: (newPosition: { x: number, y: number }) => void
 }
 
-function ImageObject({imageObject, scale = 1}: ImageObjectProps) {
+function ImageObject({imageObject, scale = 1, onPositionChange}: ImageObjectProps) {
+    const { position, handleMouseDown, dragRef } = useDraggable(
+        { x: imageObject.x, y: imageObject.y }, 
+        scale, 
+        onPositionChange
+    );
     const imageObjectStyles: CSSProperties = {
         position: 'absolute',
-        top: `${imageObject.y * scale}px`,
-        left: `${imageObject.x * scale}px`,
+        top: `${position.y * scale}px`,
+        left: `${position.x * scale}px`,
         width: `${imageObject.width * scale}px`,
         height: `${imageObject.height * scale}px`,
     }
     return (
-        /* <img style={imageObjectStyles} src={`data:image/jpeg;base64, ${imageObject.src}`}/> */
-        <img style={imageObjectStyles} src={ imageObject.src }/>
-    )
+        <img
+            ref={dragRef}
+            onMouseDown={handleMouseDown}
+            style={imageObjectStyles}
+            src={imageObject.src}
+        >
+        </img>
+    );
 }
 
 export {

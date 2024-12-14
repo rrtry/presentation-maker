@@ -1,22 +1,37 @@
 import {TextObjectType} from "../../store/PresentationType.ts";
 import {CSSProperties} from "react";
+import { useDraggable } from './useDraggable.tsx';
 
 type TextObjectProps = {
     textObject: TextObjectType,
     scale?: number,
+    onPositionChange: (newPosition: { x: number, y: number }) => void
 }
-function TextObject({textObject, scale = 1}: TextObjectProps) {
+
+function TextObject({textObject, scale = 1, onPositionChange}: TextObjectProps) {
+    const { position, handleMouseDown, dragRef } = useDraggable(
+        { x: textObject.x, y: textObject.y }, 
+        scale, 
+        onPositionChange
+    );
     const textObjectStyles: CSSProperties = {
         position: 'absolute',
-        top: `${textObject.y * scale}px`,
-        left: `${textObject.x * scale}px`,
+        top: `${position.y * scale}px`,
+        left: `${position.x * scale}px`,
         width: `${textObject.width * scale}px`,
         height: `${textObject.height * scale}px`,
-        fontSize: `${textObject.fontSize * scale}px`
-    }
+        fontSize: `${textObject.fontSize * scale}px`,
+        cursor: 'grab',
+    };
     return (
-        <p style={textObjectStyles}>{textObject.text}</p>
-    )
+        <p
+            ref={dragRef}
+            onMouseDown={handleMouseDown}
+            style={textObjectStyles}
+        >
+            {textObject.text}
+        </p>
+    );
 }
 
 export {

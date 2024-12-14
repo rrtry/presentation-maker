@@ -3,7 +3,7 @@ import {SlidesList} from "./view/SlidesList.tsx";
 import {TopPanel} from "./view/topPanel/TopPanel.tsx";
 import {Workspace} from "./view/Workspace.tsx";
 import {EditorType} from "./store/EditorType.ts";
-import { getSelection } from './store/setSelection.ts';
+import { getSelection } from './store/selection.ts';
 
 type AppProps = {
     editor: EditorType,
