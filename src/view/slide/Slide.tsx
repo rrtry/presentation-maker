@@ -24,12 +24,16 @@ function Slide({slide, scale = 1, isSelected, className, onSlideUpdate }: SlideP
     }
     
     const handlePositionChange = (id: string, newPosition: { x: number, y: number }) => {
+        console.log(
+            `handlePositionChange: id: ${id}, x: ${newPosition.x}, y: ${newPosition.y}`
+        )
+        /*
         const updatedObjects = slide.objects.map(obj =>
             obj.id === id ? { ...obj, x: newPosition.x, y: newPosition.y } : obj
         )
         if (onSlideUpdate) {
             onSlideUpdate({ ...slide, objects: updatedObjects})
-        }
+        } */
     };
 
     if (isSelected) {

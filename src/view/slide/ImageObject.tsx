@@ -13,7 +13,7 @@ function ImageObject({imageObject, scale = 1, onPositionChange}: ImageObjectProp
         { x: imageObject.x, y: imageObject.y }, 
         scale, 
         onPositionChange
-    );
+    )
     const imageObjectStyles: CSSProperties = {
         position: 'absolute',
         top: `${position.y * scale}px`,

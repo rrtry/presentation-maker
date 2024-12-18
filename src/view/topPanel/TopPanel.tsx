@@ -77,7 +77,8 @@ function TopPanel({title}: TopPanelProps) {
                        text={"Add image"}
                        className={styles.hiddenInput}
                        onChange={onImageSelected}
-                       accept={"image/jpg"}/>
+                       accept={"image/jpg"}
+                    />
                 </button>
                 <button className={styles.inputButton} onClick={onToggleColorPickerVisibility}>
                     <ColorInput

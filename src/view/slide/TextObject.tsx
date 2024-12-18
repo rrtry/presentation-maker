@@ -20,8 +20,7 @@ function TextObject({textObject, scale = 1, onPositionChange}: TextObjectProps) 
         left: `${position.x * scale}px`,
         width: `${textObject.width * scale}px`,
         height: `${textObject.height * scale}px`,
-        fontSize: `${textObject.fontSize * scale}px`,
-        cursor: 'grab',
+        fontSize: `${textObject.fontSize * scale}px`
     };
     return (
         <p
