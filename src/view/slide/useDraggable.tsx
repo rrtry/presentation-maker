@@ -5,6 +5,51 @@ export function useDraggable(
     scale: number = 1, 
     onDragEnd?: (position: { x: number, y: number }) => void) 
 {
+    const [isDragging, setIsDragging] = useState(false);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const boxRef = useRef<HTMLElement>(null);
+    const offset = useRef({ x: 0, y: 0 });
+
+    const handleMouseDown = (e) => {
+        const box = boxRef.current!!.getBoundingClientRect();
+        offset.current = {
+            x: e.clientX - box.left,
+            y: e.clientY - box.top
+        };
+
+        setIsDragging(true);
+
+        // Add mousemove and mouseup listeners when dragging starts
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+    };
+
+    const handleMouseMove = (e) => {
+        if (!isDragging) return;
+        const newX = e.clientX - offset.current.x;
+        const newY = e.clientY - offset.current.y;
+        setPosition({ x: newX, y: newY });
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+        // Remove event listeners when dragging stops
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    useEffect(() => {
+        if (isDragging) {
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+        }
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isDragging, offset]);
+    
+    /*
     const [position, setPosition] = useState(initialPosition);
     const [isDragging, setIsDragging] = useState(false);
     const dragRef = useRef<HTMLElement>(null);
@@ -51,7 +96,7 @@ export function useDraggable(
             document.removeEventListener('mouseup', handleMouseUp);
         };
     }, [isDragging, offset]);
-
-    return { position, handleMouseDown, dragRef };
+    */
+    return { position, handleMouseDown, boxRef };
 }
 

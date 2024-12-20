@@ -8,6 +8,7 @@ import { getSelection } from './store/selection.ts';
 type AppProps = {
     editor: EditorType,
 }
+
 function App({editor}: AppProps) {
     return (
         <>

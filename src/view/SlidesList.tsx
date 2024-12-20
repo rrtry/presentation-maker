@@ -4,7 +4,6 @@ import styles from './SlidesList.module.css'
 import {EditorType, SelectionType} from "../store/EditorType.ts";
 import {dispatch, getEditor} from "../store/editor.ts";
 import {setSelection} from "../store/selection.ts";
-import { getSelection } from "../store/selection.ts";
 
 const SLIDE_PREVIEW_SCALE = 0.2
 
@@ -19,19 +18,22 @@ function SlidesList({slides, selection}: SlidesListPros) {
         dispatch(setSelection, { selectedSlideId: slideId, })
     }
 
-    function onSlideUpdate(editor: EditorType, updatedSlide: SlideType): EditorType | null {
-        return null
-        /*
-        const newSlides = editor.presentation.slides.map(slide =>
-            slide.id === updatedSlide.id ? updatedSlide : slide
-        )
+    function updateEditor(editor: EditorType, newSlides: Array<SlideType>): EditorType {
         return {
             ...editor,
             presentation: {
                 ...editor.presentation,
                 slides: newSlides,
             }
-        } */
+        } 
+    }
+
+    function onSlideChange(updatedSlide: SlideType) {
+        const editor: EditorType = getEditor();
+        const newSlides = editor.presentation.slides.map(slide =>
+            slide.id === updatedSlide.id ? updatedSlide : slide
+        );
+        dispatch(updateEditor, newSlides)
     }
 
     return (
@@ -43,7 +45,7 @@ function SlidesList({slides, selection}: SlidesListPros) {
                         scale={SLIDE_PREVIEW_SCALE}
                         isSelected={slide.id == selection.selectedSlideId}
                         className={styles.item}
-                        onSlideUpdate={ (updatedSlide) => dispatch(onSlideUpdate, updatedSlide) }
+                        onSlideUpdate={onSlideChange}
                     ></Slide> 
                 </div>
             )}

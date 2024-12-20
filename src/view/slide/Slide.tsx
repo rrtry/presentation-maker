@@ -3,6 +3,10 @@ import {TextObject} from "./TextObject.tsx";
 import {ImageObject} from "./ImageObject.tsx";
 import styles from './Slide.module.css'
 import {CSSProperties} from "react";
+import { dispatch, getEditor } from "../../store/editor.ts";
+import { setSelection } from "../../store/selection.ts";
+import { editor } from "../../store/data.ts";
+import { EditorType } from "../../store/EditorType.ts";
 
 const SLIDE_WIDTH  = 935
 const SLIDE_HEIGHT = 525
@@ -12,7 +16,7 @@ type SlideProps = {
     scale?: number,
     isSelected: boolean,
     className: string,
-    onSlideUpdate?: (updatedSlide: SlideType) => void
+    onSlideUpdate: (updatedSlide: SlideType) => void
 }
 
 function Slide({slide, scale = 1, isSelected, className, onSlideUpdate }: SlideProps) {
@@ -22,18 +26,22 @@ function Slide({slide, scale = 1, isSelected, className, onSlideUpdate }: SlideP
         width: `${SLIDE_WIDTH * scale}px`,
         height: `${SLIDE_HEIGHT * scale}px`,
     }
+
+    function updateEditor(editor: EditorType, updatedSlides: Array<SlideType>): EditorType {
+        return {
+            ...editor,
+            presentation: {
+                ...editor.presentation,
+                slides: updatedSlides,
+            }
+        }
+    }
     
     const handlePositionChange = (id: string, newPosition: { x: number, y: number }) => {
-        console.log(
-            `handlePositionChange: id: ${id}, x: ${newPosition.x}, y: ${newPosition.y}`
-        )
-        /*
-        const updatedObjects = slide.objects.map(obj =>
-            obj.id === id ? { ...obj, x: newPosition.x, y: newPosition.y } : obj
-        )
-        if (onSlideUpdate) {
-            onSlideUpdate({ ...slide, objects: updatedObjects})
-        } */
+        console.log(`handlePositionChange: ${newPosition.x}, ${newPosition.y}`)
+        const updatedObjects = slide.objects.map(obj => obj.id === id ?  { ...obj, x: newPosition.x, y: newPosition.y } : obj)
+        const updatedSlides  = editor.presentation.slides.map(s => s.id === slide.id ? { ...slide, objects: updatedObjects } : s)
+        dispatch(updateEditor, updatedSlides)
     };
 
     if (isSelected) {
