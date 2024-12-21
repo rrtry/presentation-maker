@@ -15,15 +15,7 @@ function addImageObject(editor: EditorType, data: string): EditorType {
         src: data,
     };
     currentSlide.objects = currentSlide?.objects.concat(imgObject)
-    return {
-        presentation: {
-            ...editor.presentation,
-            slides: editor.presentation.slides,
-        },
-        selection: {
-            selectedSlideId: currentSlide?.id,
-        },
-    }
+    return { ...editor }
 }
 
 export {

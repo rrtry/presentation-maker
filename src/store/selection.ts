@@ -3,7 +3,7 @@ import { SlideType } from "./PresentationType.ts";
 
 function getSelection(editor: EditorType): SlideType | undefined {
     return editor.presentation.slides.find(
-        (value, index, obj) => editor.selection?.selectedSlideId == value.id
+        (value, index, obj) => editor.selection?.selectedSlideId === value.id
     )
 }
 

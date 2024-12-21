@@ -1,5 +1,4 @@
 import styles from './TopPanel.module.css'
-import {Button} from "../../components/button/Button.tsx";
 import {dispatch, getEditor} from "../../store/editor.ts";
 import {addSlide} from "../../store/addSlide.ts";
 import {removeSlide} from "../../store/removeSlide.ts";
@@ -36,7 +35,7 @@ function TopPanel({title}: TopPanelProps) {
     }
 
     function onAddTextObject() {
-        dispatch(addTextObject)
+        dispatch(addTextObject, {x: 100, y: 100})
     }
 
     function onAddImageObject(path: string) {

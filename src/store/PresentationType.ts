@@ -32,9 +32,11 @@ type ImageObjectType = BaseSlideObject & {
     src: string,
 }
 
-export {
+export type {
     PresentationType,
     SlideType,
     TextObjectType,
     ImageObjectType,
+    SlideObject,
+    BaseSlideObject
 }
