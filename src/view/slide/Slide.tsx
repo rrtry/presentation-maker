@@ -34,25 +34,18 @@ function Slide({slide, scale = 1, isSelected, className }: SlideProps) {
         backgroundColor: slide.background,
         width: `${SLIDE_WIDTH * scale}px`,
         height: `${SLIDE_HEIGHT * scale}px`,
+        border: isSelected ? '3px solid #0b57d0' : 'none'
     }
 
     function updateEditor(editor: EditorType, updatedObj: UpdatedObject): EditorType {
         const currentSlide   = getSelection(editor) as SlideType;
         const updatedObjects = currentSlide.objects.map(obj =>
             obj.id === updatedObj.id
-                ? { ...obj, x: updatedObj.x, y: updatedObj.y } // Update only the position
+                ? { ...obj, x: updatedObj.x, y: updatedObj.y }
                 : obj
         );
-        const updatedSlide = { ...currentSlide, objects: updatedObjects };
-        return {
-            ...editor,
-            presentation: {
-                ...editor.presentation,
-                slides: editor.presentation.slides.map(slide =>
-                    slide.id === currentSlide.id ? updatedSlide : slide // Replace the updated slide
-                )
-            }
-        };
+        currentSlide.objects = updatedObjects
+        return { ...editor }
     }
     
     const handlePositionChange = (id: string, newPosition: { x: number, y: number }) => {
