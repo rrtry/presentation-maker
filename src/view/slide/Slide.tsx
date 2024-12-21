@@ -22,31 +22,48 @@ type SlideProps = {
     onSlideUpdate: (updatedSlide: SlideType) => void
 }
 
-type UpdatedObject = {
+type PositionUpdateType = {
     id: string,
     x: number,
     y: number
 }
 
+type SizeUpdateType = {
+    id:     string,
+    width:  number,
+    height: number
+}
+
 function Slide({slide, scale = 1, isSelected, className }: SlideProps) {
 
     const [selected, setSelection] = useState<string | null>(null);
-    
+
     const slideStyles: CSSProperties = {
         backgroundColor: slide.background,
         width: `${SLIDE_WIDTH * scale}px`,
         height: `${SLIDE_HEIGHT * scale}px`
     }
 
-    function updateEditor(editor: EditorType, updatedObj: UpdatedObject): EditorType {
+    function updatePosition(editor: EditorType, updatedObj: PositionUpdateType): EditorType {
         const currentSlide   = getSelection(editor) as SlideType;
         currentSlide.objects = currentSlide.objects.map(obj => obj.id === updatedObj.id ? { ...obj, x: updatedObj.x, y: updatedObj.y } : obj);
         return { ...editor }
     }
+
+    function updateSize(editor: EditorType, updatedObj: SizeUpdateType): EditorType {
+        console.log(`width: ${updatedObj.width}, height: ${updatedObj.height}`)
+        const currentSlide   = getSelection(editor) as SlideType;
+        currentSlide.objects = currentSlide.objects.map(obj => obj.id === updatedObj.id ? { ...obj, width: updatedObj.width, height: updatedObj.height } : obj);
+        return { ...editor }
+    }
     
     const handlePositionChange = (id: string, newPosition: { x: number, y: number }) => {
-        dispatch(updateEditor, { id: id, x: newPosition.x, y: newPosition.y})
-    };
+        dispatch(updatePosition, { id: id, x: newPosition.x, y: newPosition.y})
+    }
+
+    const handleSizeChange = (id: string, newSize: { width: number, height: number}) => {
+        dispatch(updateSize, { id: id, width: newSize.width, height: newSize.height })
+    }
 
     if (isSelected) {
         slideStyles.border = '10px solid #0b57d0'
@@ -57,7 +74,8 @@ function Slide({slide, scale = 1, isSelected, className }: SlideProps) {
             {slide.objects.map(slideObject => {
                 switch (slideObject.type) {
                     case "text":
-                        return <TextObject 
+                        return <TextObject
+                                    onSizeChange={(newSize) => handleSizeChange(slideObject.id, newSize)} 
                                     onPositionChange={(newPosition) => handlePositionChange(slideObject.id, newPosition)}   
                                     key={slideObject.id}    
                                     textObject={slideObject}   
