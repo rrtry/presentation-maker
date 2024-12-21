@@ -2,7 +2,7 @@ import {SlideObject, SlideType} from "../../store/PresentationType.ts";
 import {TextObject} from "./TextObject.tsx";
 import {ImageObject} from "./ImageObject.tsx";
 import styles from './Slide.module.css'
-import {CSSProperties} from "react";
+import {CSSProperties, useState} from "react";
 import { dispatch, getEditor } from "../../store/editor.ts";
 import { getSelection } from "../../store/selection.ts";
 import { EditorType } from "../../store/EditorType.ts";
@@ -30,31 +30,26 @@ type UpdatedObject = {
 
 function Slide({slide, scale = 1, isSelected, className }: SlideProps) {
 
+    const [selected, setSelection] = useState<string | null>(null);
+    
     const slideStyles: CSSProperties = {
         backgroundColor: slide.background,
         width: `${SLIDE_WIDTH * scale}px`,
-        height: `${SLIDE_HEIGHT * scale}px`,
-        border: isSelected ? '3px solid #0b57d0' : 'none'
+        height: `${SLIDE_HEIGHT * scale}px`
     }
 
     function updateEditor(editor: EditorType, updatedObj: UpdatedObject): EditorType {
         const currentSlide   = getSelection(editor) as SlideType;
-        const updatedObjects = currentSlide.objects.map(obj =>
-            obj.id === updatedObj.id
-                ? { ...obj, x: updatedObj.x, y: updatedObj.y }
-                : obj
-        );
-        currentSlide.objects = updatedObjects
+        currentSlide.objects = currentSlide.objects.map(obj => obj.id === updatedObj.id ? { ...obj, x: updatedObj.x, y: updatedObj.y } : obj);
         return { ...editor }
     }
     
     const handlePositionChange = (id: string, newPosition: { x: number, y: number }) => {
-        console.log('Position changed:', id, newPosition); // Debugging log
         dispatch(updateEditor, { id: id, x: newPosition.x, y: newPosition.y})
     };
 
     if (isSelected) {
-        slideStyles.border = '3px solid #0b57d0'
+        slideStyles.border = '10px solid #0b57d0'
     }
 
     return (
@@ -65,7 +60,9 @@ function Slide({slide, scale = 1, isSelected, className }: SlideProps) {
                         return <TextObject 
                                     onPositionChange={(newPosition) => handlePositionChange(slideObject.id, newPosition)}   
                                     key={slideObject.id}    
-                                    textObject={slideObject}    
+                                    textObject={slideObject}   
+                                    isSelected={selected === slideObject.id}
+                                    onClick={() => setSelection(slideObject.id)} 
                                     scale={scale}>
                                 </TextObject>
                     case "image":
@@ -73,6 +70,8 @@ function Slide({slide, scale = 1, isSelected, className }: SlideProps) {
                                     onPositionChange={(newPosition) => handlePositionChange(slideObject.id, newPosition)}   
                                     key={slideObject.id}    
                                     imageObject={slideObject}   
+                                    isSelected={selected === slideObject.id}
+                                    onClick={() => setSelection(slideObject.id)}
                                     scale={scale}>
                                 </ImageObject>
                     default:

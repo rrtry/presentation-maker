@@ -17,15 +17,7 @@ function addTextObject(editor: EditorType, pos: {x: number, y: number}): EditorT
         fontColor:  "White"
     }
     currentSlide.objects = currentSlide?.objects.concat(textObject)
-    return {
-        presentation: {
-            ...editor.presentation,
-            slides: editor.presentation.slides,
-        },
-        selection: {
-            selectedSlideId: currentSlide?.id,
-        },
-    }
+    return { ...editor } 
 }
 
 export {

@@ -65,8 +65,8 @@ type DraggableSlideProps = {
 };
 
 function DraggableSlide({ index, slide, isSelected, onClick, moveSlide, className }: DraggableSlideProps) {
+    
     const ref = useRef<HTMLDivElement>(null);
-
     const [, drop] = useDrop({
         accept: 'SLIDE',
         hover(item: { index: number }) {

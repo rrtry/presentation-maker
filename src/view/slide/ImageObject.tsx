@@ -5,10 +5,12 @@ import { useDraggable } from "./useDraggable.ts";
 type ImageObjectProps = {
     imageObject: ImageObjectType,
     scale?: number,
-    onPositionChange: (newPosition: { x: number, y: number }) => void
+    onPositionChange: (newPosition: { x: number, y: number }) => void,
+    onClick: () => void,
+    isSelected: boolean,
 }
 
-function ImageObject({imageObject, scale = 1, onPositionChange}: ImageObjectProps) {
+function ImageObject({imageObject, scale = 1, onPositionChange, isSelected, onClick}: ImageObjectProps) {
 
     const { position, handleMouseDown } = useDraggable( 
         { x: imageObject.x, y: imageObject.y }, 
@@ -22,8 +24,12 @@ function ImageObject({imageObject, scale = 1, onPositionChange}: ImageObjectProp
         left: `${position.x * scale}px`,
         width: `${imageObject.width * scale}px`,
         height: `${imageObject.height * scale}px`,
-        cursor: 'move',
+        cursor: 'move', 
         userSelect: 'none'
+    }
+    
+    if (isSelected) {
+        imageObjectStyles.border = '2px solid #0b57d0'
     }
 
     return (
@@ -31,6 +37,7 @@ function ImageObject({imageObject, scale = 1, onPositionChange}: ImageObjectProp
             draggable="false"
             onMouseDown={handleMouseDown}
             style={imageObjectStyles}
+            onClick={onClick}
             src={imageObject.src}
         >
         </img>
