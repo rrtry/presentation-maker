@@ -31,6 +31,10 @@ function ImageObject({imageObject, scale = 1, onPositionChange, isSelected, onCl
     if (isSelected) {
         imageObjectStyles.border = '2px solid #0b57d0'
     }
+    if (scale != 1) {
+        imageObjectStyles.pointerEvents = "none"
+        imageObjectStyles.cursor = "default"
+    }
 
     return (
         <img

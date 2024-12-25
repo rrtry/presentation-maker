@@ -6,6 +6,7 @@ import { dispatch } from "../store/editor.ts";
 import { setSelection } from "../store/selection.ts";
 import { useDrag, useDrop } from 'react-dnd';
 import { useRef } from 'react';
+import { getEditor } from "../store/editor.ts";
 
 const SLIDE_PREVIEW_SCALE = 0.2;
 
@@ -37,6 +38,13 @@ function SlidesList({ slides, selection }: SlidesListPros) {
         updatedSlides.splice(hoverIndex, 0, removed);
         dispatch(onReorderSlides, updatedSlides);
     };
+
+    const slide = slides.at(0) as SlideType
+    slide.objects.forEach((obj) => {
+        if (obj.type === "text") {
+            console.log(`SlideList: ${slides.indexOf(slide)} ${obj.type} -> ${obj.x}, ${obj.y}`)
+        }
+    }) 
 
     return (
         <div className={styles.slideList}>

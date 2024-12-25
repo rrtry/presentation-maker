@@ -6,9 +6,6 @@ import {CSSProperties, useState} from "react";
 import { dispatch, getEditor } from "../../store/editor.ts";
 import { getSelection } from "../../store/selection.ts";
 import { EditorType } from "../../store/EditorType.ts";
-import { ImageObjectType } from "../../store/PresentationType.ts";
-import { addTextObject } from "../topPanel/addTextObject.ts";
-import { editor } from "../../store/data.ts";
 import { BaseSlideObject } from "../../store/PresentationType.ts";
 
 const SLIDE_WIDTH  = 935
@@ -45,14 +42,18 @@ function Slide({slide, scale = 1, isSelected, className }: SlideProps) {
     }
 
     function updatePosition(editor: EditorType, updatedObj: PositionUpdateType): EditorType {
-        const currentSlide   = getSelection(editor) as SlideType;
-        currentSlide.objects = currentSlide.objects.map(obj => obj.id === updatedObj.id ? { ...obj, x: updatedObj.x, y: updatedObj.y } : obj);
-        return { ...editor }
+        const newObjects = slide.objects.map(obj => obj.id === updatedObj.id ? { ...obj, x: updatedObj.x, y: updatedObj.y } : obj)
+        return { 
+            ...editor,
+            presentation: {
+                ...editor.presentation,
+                slides: editor.presentation.slides.map((s) => s.id === slide.id ? { ...slide, objects: newObjects} : s)
+            }
+        }
     }
 
     function updateSize(editor: EditorType, updatedObj: SizeUpdateType): EditorType {
-        console.log(`width: ${updatedObj.width}, height: ${updatedObj.height}`)
-        const currentSlide   = getSelection(editor) as SlideType;
+        const currentSlide   = getSelection(editor) as SlideType
         currentSlide.objects = currentSlide.objects.map(obj => obj.id === updatedObj.id ? { ...obj, width: updatedObj.width, height: updatedObj.height } : obj);
         return { ...editor }
     }

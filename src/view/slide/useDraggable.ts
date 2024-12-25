@@ -24,17 +24,16 @@ export function useDraggable(
     };
     
     const handleMouseUp = (e: MouseEvent) => {
-        onPositionChange({ x: e.clientX - offset.current.x, y: e.clientY - offset.current.y })
+        const newX = (e.clientX - offset.current.x) / scale;
+        const newY = (e.clientY - offset.current.y) / scale;
+        onPositionChange({ x: newX, y: newY });
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
     };
     
     useEffect(() => {
-        return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-        };
-    }, []);
+        setPosition({ x: textObject.x, y: textObject.y });
+    }, [textObject.x, textObject.y]);
 
     return {
         position,

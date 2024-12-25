@@ -17,6 +17,7 @@ function addTextObject(editor: EditorType, pos: {x: number, y: number}): EditorT
         fontColor:  "White"
     }
     currentSlide.objects = currentSlide?.objects.concat(textObject)
+    console.log(currentSlide.objects)
     return { ...editor } 
 }
 

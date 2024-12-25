@@ -6,7 +6,7 @@ type TextObjectProps = {
     textObject: TextObjectType,
     scale?: number,
     onPositionChange: (newPosition: { x: number, y: number }) => void,
-    onSizeChange: (newSize: { width: number, height: number }) => void, // New prop for size change
+    onSizeChange: (newSize: { width: number, height: number }) => void,
     isSelected: boolean,
     onClick: () => void
 };
@@ -17,16 +17,18 @@ function TextObject({
     onPositionChange,
     onSizeChange,
     isSelected,
-    onClick,
+    onClick
 }: TextObjectProps) {
+
     const { position, handleMouseDown } = useDraggable(
         { x: textObject.x, y: textObject.y },
         scale,
         onPositionChange
     );
+    console.log(`TextObject: ${textObject.text} -> ${position.x}, ${position.y}`)
 
     const [isResizing, setIsResizing] = useState(false);
-    const resizeHandleRef = useRef<string | null>(null); // Use ref instead of state
+    const resizeHandleRef = useRef<string | null>(null);
 
     const [currentWidth, setCurrentWidth]   = useState(textObject.width);
     const [currentHeight, setCurrentHeight] = useState(textObject.height);
@@ -36,7 +38,7 @@ function TextObject({
             //if (!isResizing || !resizeHandleRef.current) return;
 
             const scaleAdjusted = scale; 
-            let newWidth = currentWidth;
+            let newWidth  = currentWidth;
             let newHeight = currentHeight;
             const offsetX = e.clientX;
             const offsetY = e.clientY;
@@ -115,7 +117,6 @@ function TextObject({
 
     const textBoxStyles: CSSProperties = {
         position: 'absolute',
-        display: 'inline-block',
         top: `${position.y * scale}px`,
         left: `${position.x * scale}px`,
         width: `${currentWidth * scale}px`,
@@ -127,6 +128,10 @@ function TextObject({
 
     if (isSelected) {
         textBoxStyles.border = '2px solid #0b57d0';
+    }
+    if (scale != 1) {
+        textBoxStyles.pointerEvents = "none";
+        textBoxStyles.cursor = "default";
     }
 
     return (
