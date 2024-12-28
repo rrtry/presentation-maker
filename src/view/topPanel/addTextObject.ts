@@ -10,7 +10,7 @@ function addTextObject(editor: EditorType, pos: {x: number, y: number}): EditorT
         y: pos.y,
         width:  100,
         height: 100,
-        fontSize: 100,
+        fontSize: 50,
         type: "text",
         text: "Sample text",
         fontFamily: "cursive",

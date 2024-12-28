@@ -25,7 +25,7 @@ function TextObject({
         scale,
         onPositionChange
     );
-    console.log(`TextObject: ${textObject.text} -> ${position.x}, ${position.y}`)
+    console.log(`TextObject: ${textObject.text} -> ${position.x}, ${position.y}, ${textObject.width}`)
 
     const [isResizing, setIsResizing] = useState(false);
     const resizeHandleRef = useRef<string | null>(null);
@@ -120,10 +120,15 @@ function TextObject({
         top: `${position.y * scale}px`,
         left: `${position.x * scale}px`,
         width: `${currentWidth * scale}px`,
-        height: `${currentHeight * scale}px`,
-        textAlign: 'center',
-        cursor: isResizing ? 'grabbing' : 'move',
+        height: `${currentHeight * scale}`,
+        fontFamily: textObject.fontFamily,
+        fontSize: `${textObject.fontSize * scale}px`,
         userSelect: 'none',
+        whiteSpace: 'pre-wrap',
+        overflow: 'hidden', 
+        boxSizing: 'border-box',
+        border: isSelected ? '2px solid #0b57d0' : undefined,
+        cursor: isResizing ? 'grabbing' : 'move'
     };
 
     if (isSelected) {
@@ -197,7 +202,7 @@ function TextObject({
                     />
                 </>
             )}
-        </div>
+        </div> 
     );
 }
 
