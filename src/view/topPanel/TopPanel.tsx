@@ -64,31 +64,36 @@ function TopPanel({title}: TopPanelProps) {
             reader.readAsDataURL(file);
         }   
     }
+    
     return (
-        <div className={styles.topPanel}>
+        <header className={styles.topPanel}>
             <input className={styles.title} type="text" defaultValue={title} onChange={onTitleChange}/>
-            <div>
-                <button className={styles.button} onClick={onAddSlide}>{'Add slide'}</button>
-                <button className={styles.button} onClick={onRemoveSlide}>{'Remove slide'}</button>
-                <button className={styles.button} onClick={onAddTextObject}>{'Add text'}</button>
-                <button className={styles.inputButton}>
-                    <ImageInput
-                       text={"Add image"}
-                       className={styles.hiddenInput}
-                       onChange={onImageSelected}
-                       accept={"image/jpg"}
-                    />
-                </button>
-                <button className={styles.inputButton} onClick={onToggleColorPickerVisibility}>
-                    <ColorInput
-                        text={"Change Background"}
+            <ul className={styles.actions}>
+                <li className={styles.action}><button className={styles.button} onClick={onAddSlide}>{'Add slide'}</button></li>
+                <li className={styles.action}><button className={styles.button} onClick={onRemoveSlide}>{'Remove slide'}</button></li>
+                <li className={styles.action}><button className={styles.button} onClick={onAddTextObject}>{'Add text'}</button></li>
+                <li className={styles.action}>
+                    <button className={styles.inputButton}>
+                        <ImageInput
+                        text={"Add image"}
                         className={styles.hiddenInput}
-                        value={color}
-                        onChange={onBackgroundColorChange}
-                    />
-                </button>
-            </div>
-        </div>
+                        onChange={onImageSelected}
+                        accept={"image/jpg"}
+                        />
+                    </button>
+                </li>
+                <li className={styles.action}>
+                    <button className={styles.inputButton} onClick={onToggleColorPickerVisibility}>
+                        <ColorInput
+                            text={"Change Background"}
+                            className={styles.hiddenInput}
+                            value={color}
+                            onChange={onBackgroundColorChange}
+                        />
+                    </button>
+                </li>
+            </ul>
+        </header>
     )
 }
 

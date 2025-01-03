@@ -6,7 +6,6 @@ import {CSSProperties, useState} from "react";
 import { dispatch, getEditor } from "../../store/editor.ts";
 import { getSelection } from "../../store/selection.ts";
 import { EditorType } from "../../store/EditorType.ts";
-import { BaseSlideObject } from "../../store/PresentationType.ts";
 
 const SLIDE_WIDTH  = 935
 const SLIDE_HEIGHT = 525

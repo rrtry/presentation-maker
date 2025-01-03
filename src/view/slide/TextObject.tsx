@@ -32,7 +32,7 @@ function TextObject({
 
     const [currentWidth, setCurrentWidth]   = useState(textObject.width);
     const [currentHeight, setCurrentHeight] = useState(textObject.height);
-
+    
     const handleResize = useCallback(
         (e: MouseEvent) => {
             //if (!isResizing || !resizeHandleRef.current) return;
@@ -58,7 +58,7 @@ function TextObject({
                     newHeight = offsetY - position.y;
                     break;
                 case 'bottom-right':
-                    newWidth = offsetX - position.x;
+                    newWidth  = offsetX - position.x;
                     newHeight = offsetY - position.y;
                     break;
                 case 'top':
@@ -68,10 +68,10 @@ function TextObject({
                     newHeight = offsetY - position.y;
                     break;
                 case 'left':
-                    newWidth = currentWidth - (offsetX - position.x) / scaleAdjusted;
+                    //newWidth = currentWidth - (offsetX - position.x) / scaleAdjusted;
                     break;
                 case 'right':
-                    newWidth = offsetX - position.x;
+                    //newWidth = offsetX - position.x;
                     break;
                 default:
                     break;

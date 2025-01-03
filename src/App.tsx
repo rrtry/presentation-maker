@@ -15,10 +15,10 @@ function App({ editor }: AppProps) {
     return (
         <DndProvider backend={HTML5Backend}>
             <TopPanel title={editor.presentation.title}></TopPanel>
-            <div className={styles.container}>
+            <main className={styles.container}>
                 <SlidesList slides={editor.presentation.slides} selection={editor.selection}></SlidesList>
                 <Workspace slide={getSelection(editor) || editor.presentation.slides[0]}></Workspace>
-            </div>
+            </main>
         </DndProvider>
     );
 }

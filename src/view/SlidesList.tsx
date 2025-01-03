@@ -6,7 +6,6 @@ import { dispatch } from "../store/editor.ts";
 import { setSelection } from "../store/selection.ts";
 import { useDrag, useDrop } from 'react-dnd';
 import { useRef } from 'react';
-import { getEditor } from "../store/editor.ts";
 
 const SLIDE_PREVIEW_SCALE = 0.2;
 
@@ -37,17 +36,10 @@ function SlidesList({ slides, selection }: SlidesListPros) {
         const [removed] = updatedSlides.splice(dragIndex, 1);
         updatedSlides.splice(hoverIndex, 0, removed);
         dispatch(onReorderSlides, updatedSlides);
-    };
-
-    const slide = slides.at(0) as SlideType
-    slide.objects.forEach((obj) => {
-        if (obj.type === "text") {
-            console.log(`SlideList: ${slides.indexOf(slide)} ${obj.type} -> ${obj.x}, ${obj.y}`)
-        }
-    }) 
+    }; 
 
     return (
-        <div className={styles.slideList}>
+        <ul className={styles.slidesList}>
             {slides.map((slide, index) => (
                 <DraggableSlide
                     key={slide.id}
@@ -59,7 +51,7 @@ function SlidesList({ slides, selection }: SlidesListPros) {
                     className={styles.item}
                 />
             ))}
-        </div>
+        </ul>
     );
 }
 
@@ -74,7 +66,7 @@ type DraggableSlideProps = {
 
 function DraggableSlide({ index, slide, isSelected, onClick, moveSlide, className }: DraggableSlideProps) {
     
-    const ref = useRef<HTMLDivElement>(null);
+    const ref = useRef<HTMLDivElement | null>(null);
     const [, drop] = useDrop({
         accept: 'SLIDE',
         hover(item: { index: number }) {
@@ -100,14 +92,14 @@ function DraggableSlide({ index, slide, isSelected, onClick, moveSlide, classNam
     drag(drop(ref));
 
     return (
-        <div
+        <li
             ref={ref}
             onClick={onClick}
             className={`${className} ${isSelected ? styles.selected : ''}`}
             style={{ opacity: isDragging ? 0.5 : 1 }}
         >
             <Slide slide={slide} scale={SLIDE_PREVIEW_SCALE} className={styles.slide} />
-        </div>
+        </li>
     );
 }
 
