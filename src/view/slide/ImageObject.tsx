@@ -13,7 +13,7 @@ type ImageObjectProps = {
 function ImageObject({imageObject, scale = 1, onPositionChange, isSelected, onClick}: ImageObjectProps) {
 
     const { position, handleMouseDown } = useDraggable( 
-        { x: imageObject.x, y: imageObject.y }, 
+        imageObject, 
         scale,
         onPositionChange
     )

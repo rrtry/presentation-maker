@@ -21,11 +21,10 @@ function TextObject({
 }: TextObjectProps) {
 
     const { position, handleMouseDown } = useDraggable(
-        { x: textObject.x, y: textObject.y },
+        textObject,
         scale,
         onPositionChange
     );
-    console.log(`TextObject: ${textObject.text} -> ${position.x}, ${position.y}, ${textObject.width}`)
 
     const [isResizing, setIsResizing] = useState(false);
     const resizeHandleRef = useRef<string | null>(null);
@@ -120,7 +119,7 @@ function TextObject({
         top: `${position.y * scale}px`,
         left: `${position.x * scale}px`,
         width: `${currentWidth * scale}px`,
-        height: `${currentHeight * scale}`,
+        height: `${currentHeight * scale}px`,
         fontFamily: textObject.fontFamily,
         fontSize: `${textObject.fontSize * scale}px`,
         userSelect: 'none',
