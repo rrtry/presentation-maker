@@ -1,6 +1,7 @@
 import { TextObjectType } from "../../store/PresentationType";
 import { CSSProperties, useState, useRef, useCallback } from "react";
 import { useDraggable } from './useDraggable';
+import { ResizeHandles } from "./resizeHandles";
 
 type TextObjectProps = {
     textObject: TextObjectType,
@@ -31,10 +32,9 @@ function TextObject({
 
     const [currentWidth, setCurrentWidth]   = useState(textObject.width);
     const [currentHeight, setCurrentHeight] = useState(textObject.height);
-    
+
     const handleResize = useCallback(
         (e: MouseEvent) => {
-            //if (!isResizing || !resizeHandleRef.current) return;
 
             const scaleAdjusted = scale; 
             let newWidth  = currentWidth;
@@ -66,10 +66,10 @@ function TextObject({
                     newHeight = offsetY - position.y;
                     break;
                 case 'left':
-                    //newWidth = currentWidth - (offsetX - position.x) / scaleAdjusted;
+                    newWidth = currentWidth - (offsetX - position.x) / scaleAdjusted;
                     break;
                 case 'right':
-                    //newWidth = offsetX - position.x;
+                    newWidth = offsetX - position.x;
                     break;
                 default:
                     break;
@@ -84,7 +84,7 @@ function TextObject({
             onSizeChange(newSize);
         },
         [isResizing, position, currentWidth, currentHeight, scale, onSizeChange]
-    );
+    ); 
 
     const handleResizeStart = (e: React.MouseEvent, handle: string) => {
         setIsResizing(true);
@@ -99,15 +99,6 @@ function TextObject({
         resizeHandleRef.current = null;
         document.removeEventListener('mousemove', handleResize);
         document.removeEventListener('mouseup', handleResizeEnd);
-    };
-
-    const resizeHandleStyles: CSSProperties = {
-        position: 'absolute',
-        width: '2px',
-        height: '2px',
-        borderRadius: '50%',
-        backgroundColor: '#0b57d0',
-        cursor: 'pointer',
     };
 
     const textBoxStyles: CSSProperties = {
@@ -137,66 +128,7 @@ function TextObject({
     return (
         <div style={textBoxStyles} onClick={onClick} onMouseDown={handleMouseDown}>
             {textObject.text}
-            {isSelected && (
-                <>
-                    <div
-                        style={{ ...resizeHandleStyles, cursor: 'nw-resize', top: 0, left: 0 }}
-                        onMouseDown={(e) => handleResizeStart(e, 'top-left')}
-                    />
-                    <div
-                        style={{ ...resizeHandleStyles, cursor: 'ne-resize', top: 0, right: 0 }}
-                        onMouseDown={(e) => handleResizeStart(e, 'top-right')}
-                    />
-                    <div
-                        style={{ ...resizeHandleStyles, cursor: 'sw-resize', bottom: 0, left: 0 }}
-                        onMouseDown={(e) => handleResizeStart(e, 'bottom-left')}
-                    />
-                    <div
-                        style={{ ...resizeHandleStyles, cursor: 'se-resize', bottom: 0, right: 0 }}
-                        onMouseDown={(e) => handleResizeStart(e, 'bottom-right')}
-                    />
-                    <div
-                        style={{
-                            ...resizeHandleStyles,
-                            cursor: 'n-resize',
-                            top: 0,
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                        }}
-                        onMouseDown={(e) => handleResizeStart(e, 'top')}
-                    />
-                    <div
-                        style={{
-                            ...resizeHandleStyles,
-                            cursor: 's-resize',
-                            bottom: 0,
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                        }}
-                        onMouseDown={(e) => handleResizeStart(e, 'bottom')}
-                    />
-                    <div
-                        style={{
-                            ...resizeHandleStyles,
-                            cursor: 'w-resize',
-                            top: '50%',
-                            left: 0,
-                            transform: 'translateY(-50%)',
-                        }}
-                        onMouseDown={(e) => handleResizeStart(e, 'left')}
-                    />
-                    <div
-                        style={{
-                            ...resizeHandleStyles,
-                            cursor: 'e-resize',
-                            top: '50%',
-                            right: 0,
-                            transform: 'translateY(-50%)',
-                        }}
-                        onMouseDown={(e) => handleResizeStart(e, 'right')}
-                    />
-                </>
-            )}
+            {isSelected && ResizeHandles(handleResizeStart)}
         </div> 
     );
 }
