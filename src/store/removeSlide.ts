@@ -25,8 +25,9 @@ function removeSlide(editor: EditorType): EditorType {
             slides: newSlides,
         },
         selection: {
-            selectedSlideId: newSelectedSlideId,
+            selectedSlideId: newSelectedSlideId!!,
         },
+        objectId: null
     }
 }
 

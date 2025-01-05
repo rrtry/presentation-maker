@@ -41,8 +41,7 @@ function TextObject({
             let newHeight = currentHeight;
             const offsetX = e.clientX;
             const offsetY = e.clientY;
-
-            console.log('Resizing with handle:', resizeHandleRef.current);
+            
             switch (resizeHandleRef.current) {
                 case 'top-left':
                     newWidth = currentWidth - (offsetX - position.x) / scaleAdjusted;
@@ -80,7 +79,6 @@ function TextObject({
             if (newHeight < 100) newHeight = 100;
             const newSize = { width: newWidth, height: newHeight }
 
-            console.log('New size:', newSize);
             setCurrentWidth(newWidth);
             setCurrentHeight(newHeight);
             onSizeChange(newSize);
@@ -93,8 +91,7 @@ function TextObject({
         resizeHandleRef.current = handle;
         document.addEventListener('mousemove', handleResize);
         document.addEventListener('mouseup', handleResizeEnd);
-        e.stopPropagation(); 
-        console.log('Started resizing with handle:', handle);
+        e.stopPropagation();
     };
 
     const handleResizeEnd = () => {
@@ -102,7 +99,6 @@ function TextObject({
         resizeHandleRef.current = null;
         document.removeEventListener('mousemove', handleResize);
         document.removeEventListener('mouseup', handleResizeEnd);
-        console.log('Resizing ended');
     };
 
     const resizeHandleStyles: CSSProperties = {

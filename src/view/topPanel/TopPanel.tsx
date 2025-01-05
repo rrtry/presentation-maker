@@ -11,6 +11,7 @@ import * as React from "react";
 import { editor } from '../../store/data.ts';
 import { ColorInput } from '../../components/Input.tsx';
 import { ImageInput } from '../../components/Input.tsx';
+import { removeObject } from './removeObject.ts';
 
 type TopPanelProps = {
     title: string,
@@ -32,6 +33,10 @@ function TopPanel({title}: TopPanelProps) {
 
     function onRemoveSlide() {
         dispatch(removeSlide)
+    }
+
+    function onRemoveObject() {
+        dispatch(removeObject)
     }
 
     function onAddTextObject() {
@@ -82,6 +87,7 @@ function TopPanel({title}: TopPanelProps) {
                         />
                     </button>
                 </li>
+                <li className={styles.action}><button className={styles.button} onClick={onRemoveObject}>{'Remove object'}</button></li>
                 <li className={styles.action}>
                     <button className={styles.inputButton} onClick={onToggleColorPickerVisibility}>
                         <ColorInput

@@ -11,10 +11,11 @@ function setSelection(editor: EditorType, newSelection: SelectionType): EditorTy
     return {
         ...editor,
         selection: newSelection,
+        objectId: null
     }
 }
 
 export {
     getSelection,
-    setSelection,
+    setSelection
 }

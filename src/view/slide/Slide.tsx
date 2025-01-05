@@ -6,6 +6,7 @@ import {CSSProperties, useState} from "react";
 import { dispatch, getEditor } from "../../store/editor.ts";
 import { getSelection } from "../../store/selection.ts";
 import { EditorType } from "../../store/EditorType.ts";
+import { editor } from "../../store/data.ts";
 
 const SLIDE_WIDTH  = 935
 const SLIDE_HEIGHT = 525
@@ -32,7 +33,18 @@ type SizeUpdateType = {
 
 function Slide({slide, scale = 1, isSelected, className }: SlideProps) {
 
-    const [selected, setSelection] = useState<string | null>(null);
+    const [selected, _setSelection] = useState<string | null>(getEditor().objectId);
+    console.log(`slide: ${slide.objects.length}, ${selected}`)
+
+    const setSelection = (id: string) => {
+        dispatch((editor: EditorType, object: string) => {
+            return {
+                ...editor,
+                objectId: object
+            }
+        }, id)
+        _setSelection(id)
+    }
 
     const slideStyles: CSSProperties = {
         backgroundColor: slide.background,

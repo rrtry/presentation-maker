@@ -16,7 +16,8 @@ function addSlide(editor: EditorType): EditorType {
         },
         selection: {
             selectedSlideId: newSlideId,
-        }
+        },
+        objectId: null
     }
 }
 

@@ -6,7 +6,8 @@ type SelectionType = {
 
 type EditorType = {
     presentation: PresentationType,
-    selection: SelectionType | null,
+    selection:    SelectionType | null,
+    objectId:     string | null
 }
 
 export type {
