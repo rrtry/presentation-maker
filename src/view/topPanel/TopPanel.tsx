@@ -22,6 +22,14 @@ function TopPanel({title}: TopPanelProps) {
     const [colorPickerVisible, setColorPickerVisible] = React.useState(false)
     const [color, setColor] = React.useState(getSelection(editor)!!.background)
 
+    function onImportDocument() {
+        // TODO: implement
+    }
+
+    function onExportDocument() {
+        // TODO: implement
+    }
+
     function onToggleColorPickerVisibility() {
         setColor(getSelection(getEditor())!!.background)
         setColorPickerVisible(prevState => !prevState)
@@ -98,6 +106,8 @@ function TopPanel({title}: TopPanelProps) {
                         />
                     </button>
                 </li>
+                <li className={styles.action}><button className={styles.button} onClick={onImportDocument}>{'Import document'}</button></li>
+                <li className={styles.action}><button className={styles.button} onClick={onExportDocument}>{'Export document'}</button></li>
             </ul>
         </header>
     )

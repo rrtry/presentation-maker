@@ -81,8 +81,7 @@ export function useResizable(
         };
 
         const handleMouseUp = (event: MouseEvent) => {
-            const newSize = handleMouseMove(event);
-            onSizeChange(newSize);
+            onSizeChange(handleMouseMove(event));
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("mouseup", handleMouseUp);
         };
