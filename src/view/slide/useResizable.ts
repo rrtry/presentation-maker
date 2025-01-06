@@ -1,15 +1,22 @@
 import { useState, useEffect } from "react";
+import { BaseSlideObject } from "../../store/PresentationType";
 
 export function useResizable(
-    initialPosition: { x: number; y: number },
-    initialSize: { width: number; height: number },
+    slideObject: BaseSlideObject,
     scale: number,
-    onPositionChange: (newPosition: { x: number; y: number }) => void,
-    onSizeChange: (newSize: { width: number; height: number }) => void) 
+    onSizeChange: (newSize: { 
+        width: number; 
+        height: number;
+        x: number;
+        y: number;
+     }) => void) 
 {
-        
-    const [size, setSize] = useState(initialSize);
-    const [position, setPosition] = useState(initialPosition);
+    const [size, setSize] = useState({
+        width: slideObject.width, 
+        height: slideObject.height,
+        x: slideObject.x,
+        y: slideObject.y
+    });
 
     const handleResizeStart = (e: React.MouseEvent, handle: string) => {
 
@@ -20,8 +27,8 @@ export function useResizable(
         const initialWidth  = size.width;
         const initialHeight = size.height;
 
-        const initialX = position.x;
-        const initialY = position.y;
+        const initialX = size.x;
+        const initialY = size.y;
 
         const handleMouseMove = (event: MouseEvent) => {
 
@@ -68,31 +75,33 @@ export function useResizable(
                 newWidth  = initialWidth + deltaX;
                 newHeight = initialHeight + deltaY;
             }
-
-            setSize({ width: newWidth, height: newHeight });
-            setPosition({ x: newX, y: newY });
-            onSizeChange({ width: newWidth, height: newHeight });
-            onPositionChange({ x: newX, y: newY });
+            const newSize = { width: newWidth, height: newHeight, x: newX, y: newY };
+            setSize(newSize);
+            return newSize;
         };
 
-        const handleMouseUp = (e: MouseEvent) => {
+        const handleMouseUp = (event: MouseEvent) => {
+            const newSize = handleMouseMove(event);
+            onSizeChange(newSize);
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("mouseup", handleMouseUp);
         };
-
         window.addEventListener("mousemove", handleMouseMove);
         window.addEventListener("mouseup", handleMouseUp);
     };
 
     useEffect(() => {
-        setPosition(position)
-        setSize(size)
+        setSize({
+            x: slideObject.x, 
+            y: slideObject.y, 
+            width: slideObject.width, 
+            height: slideObject.height
+        });
     }, 
-    [size, position])
+    [slideObject.x, slideObject.y, slideObject.width, slideObject.height])
 
     return {
-        position,
         size,
-        handleResizeStart,
+        handleResizeStart
     };
 }

@@ -1,14 +1,14 @@
 import { CSSProperties } from "react";
 import { ImageObjectType } from "../../store/PresentationType.ts";
-import { useDraggable } from "./useDraggable.ts";
 import { useResizable } from "./useResizable.ts";
-import { ResizeHandles } from "./ResizeHandles.tsx";
+import { useDraggable } from "./useDraggable.ts";
+import { ResizeHandles } from "./resizeHandles.tsx";
 
 type ImageObjectProps = {
   imageObject: ImageObjectType;
   scale?: number;
   onPositionChange: (newPosition: { x: number; y: number }) => void;
-  onSizeChange: (newSize: { width: number; height: number }) => void;
+  onSizeChange: (newSize: { width: number; height: number, x: number, y: number }) => void;
   onClick: () => void;
   isSelected: boolean;
 };
@@ -22,23 +22,21 @@ function ImageObject({
   onClick,
 }: ImageObjectProps) {
     
-    const { position: resizedPosition, size, handleResizeStart } = useResizable(
-        { x: imageObject.x, y: imageObject.y },
-        { width: imageObject.width, height: imageObject.height },
+    const { size, handleResizeStart } = useResizable(
+        imageObject,
         scale,
-        onPositionChange,
         onSizeChange
     );
 
-    const { position: dragPosition, handleMouseDown } = useDraggable(
+    const { position, handleMouseDown } = useDraggable(
         imageObject,
         scale,
         onPositionChange
     );
 
     const finalPosition = {
-        x: resizedPosition.x !== imageObject.x ? resizedPosition.x : dragPosition.x,
-        y: resizedPosition.y !== imageObject.y ? resizedPosition.y : dragPosition.y,
+        x: size.x !== imageObject.x ? size.x : position.x,
+        y: size.y !== imageObject.y ? size.y : position.y,
     };
 
     const imageObjectStyles: CSSProperties = {
