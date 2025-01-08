@@ -4,13 +4,8 @@ type InputProps = {
     text: string
 }
 
-type ImageInputProps = InputProps & {
-    accept: string
-}
-
-type ColorInputProps = InputProps & {
-    value: string
-}
+type FileInputProps  = InputProps & { accept: string }
+type ColorInputProps = InputProps & { value: string }
 
 function ColorInput({className, onChange, text, value}: ColorInputProps) {
     return (
@@ -21,12 +16,12 @@ function ColorInput({className, onChange, text, value}: ColorInputProps) {
                 value={value}
                 onChange={onChange}
             />
-        {"Change background"}
+        {text}
         </div>
     )
 }
 
-function ImageInput({className, onChange, text, accept}: ImageInputProps) {
+function FileInput({className, onChange, text, accept}: FileInputProps) {
     return (
         <div>
             <input
@@ -42,5 +37,5 @@ function ImageInput({className, onChange, text, accept}: ImageInputProps) {
 
 export {
     ColorInput,
-    ImageInput
+    FileInput
 }

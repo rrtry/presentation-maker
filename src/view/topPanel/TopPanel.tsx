@@ -10,8 +10,14 @@ import { getSelection } from '../../store/selection.ts';
 import * as React from "react";
 import { editor } from '../../store/data.ts';
 import { ColorInput } from '../../components/Input.tsx';
-import { ImageInput } from '../../components/Input.tsx';
+import { FileInput } from '../../components/Input.tsx';
 import { removeObject } from './removeObject.ts';
+import { PresentationType } from '../../store/PresentationType.ts';
+import { PresentationSchema } from '../../store/schemas/PresentationSchema.ts';
+import { Ajv } from "ajv";
+
+const ajv = new Ajv(); 
+const validatePresentation = ajv.compile(PresentationSchema);
 
 type TopPanelProps = {
     title: string,
@@ -22,12 +28,31 @@ function TopPanel({title}: TopPanelProps) {
     const [colorPickerVisible, setColorPickerVisible] = React.useState(false)
     const [color, setColor] = React.useState(getSelection(editor)!!.background)
 
-    function onImportDocument() {
-        // TODO: implement
+    function onImportDocument(jsonSchema: string) {
+        const presentation: PresentationType = JSON.parse(jsonSchema);
+        if (validatePresentation(presentation)) {
+            dispatch(() => {
+                return {
+                    presentation: presentation,
+                    selection: { selectedSlideId: presentation.slides[0].id },
+                    objectId: null
+                }
+            });
+        } else {
+            alert('Could not import presentation: Invalid schema');
+        }
     }
 
     function onExportDocument() {
-        // TODO: implement
+        const editor = getEditor();
+        const a = document.createElement('a');
+        a.download = editor.presentation.title;
+        console.log(`${editor.presentation.title}`)
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(editor.presentation)], { type: 'application/json' }));
+        a.addEventListener('click', (e) => {
+            setTimeout(() => URL.revokeObjectURL(a.href), 30 * 1000);
+        });
+        a.click();
     }
 
     function onToggleColorPickerVisibility() {
@@ -65,18 +90,28 @@ function TopPanel({title}: TopPanelProps) {
         setColor(value)
     }
 
-    const onImageSelected: React.ChangeEventHandler = (event) => {
-        const file = (event.target as HTMLInputElement).files?.[0]
+    const onFileSelected = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        type: string,
+        onload: (file: string) => void
+    ) => {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
         if (file) {
-            const reader  = new FileReader();
-            reader.onload = function(e) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
                 if (e.target) {
-                    onAddImageObject(e.target.result as string)
+                    onload(e.target.result as string);
                 }
+            };
+            if (type.startsWith('image')) {
+                reader.readAsDataURL(file);
+            } else {
+                reader.readAsText(file);
             }
-            reader.readAsDataURL(file);
-        }   
-    }
+        }
+        input.value = '';
+    };
     
     return (
         <header className={styles.topPanel}>
@@ -87,11 +122,11 @@ function TopPanel({title}: TopPanelProps) {
                 <li className={styles.action}><button className={styles.button} onClick={onAddTextObject}>{'Add text'}</button></li>
                 <li className={styles.action}>
                     <button className={styles.inputButton}>
-                        <ImageInput
-                        text={"Add image"}
-                        className={styles.hiddenInput}
-                        onChange={onImageSelected}
-                        accept={"image/jpg"}
+                        <FileInput
+                            text={"Add image"}
+                            className={styles.hiddenInput}
+                            onChange={(e) => onFileSelected(e, "image/jpg", onAddImageObject)}
+                            accept={"image/jpg"}
                         />
                     </button>
                 </li>
@@ -106,8 +141,17 @@ function TopPanel({title}: TopPanelProps) {
                         />
                     </button>
                 </li>
-                <li className={styles.action}><button className={styles.button} onClick={onImportDocument}>{'Import document'}</button></li>
                 <li className={styles.action}><button className={styles.button} onClick={onExportDocument}>{'Export document'}</button></li>
+                <li className={styles.action}>
+                    <button className={styles.inputButton}>
+                        <FileInput
+                            text={"Import document"}
+                            className={styles.hiddenInput}
+                            onChange={(e) => onFileSelected(e, "application/json", onImportDocument)}
+                            accept={"application/json"}
+                        />
+                    </button>
+                </li>
             </ul>
         </header>
     )

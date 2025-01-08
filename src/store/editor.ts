@@ -1,21 +1,20 @@
 import {editor} from './data.ts'
+import { EditorType } from './EditorType.ts';
 
-let _editor = editor
+let _editor  = editor
 let _handler = null
 
-const STORAGE_KEY = "editor"
+export const STORAGE_KEY = "editor"
 
 function getEditor() {
-    const savedEditor = localStorage.getItem(STORAGE_KEY);
-    if (savedEditor !== null) {
-        return JSON.parse(savedEditor);
-    }
     return _editor;
 }
 
-function setEditor(newEditor) {
-    _editor = newEditor
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newEditor))
+function setEditor(newEditor: EditorType, saveToStorage: boolean = true) {
+    _editor = newEditor;
+    if (saveToStorage) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newEditor));
+    }
 }
 
 function dispatch(modifyFn: Function, payload?: Object): void {
@@ -32,6 +31,7 @@ function addEditorChangeHandler(handler: Function): void {
 
 export {
     getEditor,
+    setEditor,
     dispatch,
     addEditorChangeHandler,
 }
