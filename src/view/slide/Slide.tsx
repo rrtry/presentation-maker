@@ -3,8 +3,10 @@ import {TextObject} from "./TextObject.tsx";
 import {ImageObject} from "./ImageObject.tsx";
 import styles from './Slide.module.css'
 import {CSSProperties, useState} from "react";
-import { dispatch, getEditor } from "../../store/editor.ts";
 import { EditorType } from "../../store/EditorType.ts";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/store.ts";
+import * as actions from "../../store/actions.ts";
 
 const SLIDE_WIDTH  = 935
 const SLIDE_HEIGHT = 525
@@ -19,15 +21,13 @@ type SlideProps = {
 
 function Slide({slide, scale = 1, isSelected, className }: SlideProps) {
 
-    const [selected, _setSelection] = useState<string | null>(getEditor().objectId);
+    const dispatch = useDispatch(); 
+    const editor   = useSelector((state: RootState) => state.editor);
+
+    const [selected, _setSelection] = useState<string | null>(editor.objectId);
     const setSelection = (id: string) => {
-        dispatch((editor: EditorType, object: string) => {
-            return {
-                ...editor,
-                objectId: object
-            }
-        }, id)
-        _setSelection(id)
+        dispatch(actions.setObjectSelection(id));
+        _setSelection(id);
     }
 
     const slideStyles: CSSProperties = {
@@ -35,51 +35,24 @@ function Slide({slide, scale = 1, isSelected, className }: SlideProps) {
         width: `${SLIDE_WIDTH * scale}px`,
         height: `${SLIDE_HEIGHT * scale}px`
     }
-
-    function updatePosition(editor: EditorType, updatedObj: {
-        id: string,
-        x: number,
-        y: number
-    }): EditorType {
-        const newObjects = slide.objects.map(obj => obj.id === updatedObj.id ? { ...obj, x: updatedObj.x, y: updatedObj.y } : obj)
-        return { 
-            ...editor,
-            presentation: {
-                ...editor.presentation,
-                slides: editor.presentation.slides.map((s) => s.id === slide.id ? { ...slide, objects: newObjects} : s)
-            }
-        }
-    }
-
-    function updateSize(editor: EditorType, updatedObj: { 
-        id: string, 
-        width:  number, 
-        height: number, 
-        x: number, 
-        y: number
-    }): EditorType {
-        const newObjects = slide.objects.map(obj => obj.id === updatedObj.id ? { 
-            ...obj, 
-            width: updatedObj.width, 
-            height: updatedObj.height,
-            x: updatedObj.x, 
-            y: updatedObj.y
-         } : obj);
-        return { 
-            ...editor,
-            presentation: {
-                ...editor.presentation,
-                slides: editor.presentation.slides.map((s) => s.id === slide.id ? { ...slide, objects: newObjects} : s)
-            }
-        }
-    }
     
     const handlePositionChange = (id: string, newPosition: { x: number, y: number }) => {
-        dispatch(updatePosition, { id: id, x: newPosition.x, y: newPosition.y})
+        dispatch(actions.updateObjectPos({
+            id: id,
+            x: newPosition.x,
+            y: newPosition.y
+        }
+        ));
     }
 
     const handleSizeChange = (id: string, newSize: { width: number, height: number, x: number, y: number}) => {
-        dispatch(updateSize, { id: id, width: newSize.width, height: newSize.height, x: newSize.x, y: newSize.y })
+        dispatch(actions.updateObjectSize({
+            id: id,
+            width: newSize.width,
+            height: newSize.height,
+            x: newSize.x,
+            y: newSize.y
+        }));
     }
 
     if (isSelected) {

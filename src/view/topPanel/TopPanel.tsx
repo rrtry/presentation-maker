@@ -1,53 +1,46 @@
 import styles from './TopPanel.module.css'
-import {dispatch, getEditor} from "../../store/editor.ts";
-import {addSlide} from "../../store/addSlide.ts";
-import {removeSlide} from "../../store/removeSlide.ts";
-import {renamePresentationTitle} from "../../store/renamePresentationTitle.ts";
-import { addTextObject } from './addTextObject.ts';
-import { addImageObject } from './addImageObject.ts';
-import { changeSlideBackgroundColor } from '../slide/changeSlideBackgroundColor.ts';
-import { getSelection } from '../../store/selection.ts';
 import * as React from "react";
-import { editor } from '../../store/data.ts';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store/store.ts';
 import { ColorInput } from '../../components/Input.tsx';
 import { FileInput } from '../../components/Input.tsx';
-import { removeObject } from './removeObject.ts';
-import { PresentationType } from '../../store/PresentationType.ts';
 import { PresentationSchema } from '../../store/schemas/PresentationSchema.ts';
 import { Ajv } from "ajv";
+import * as actions from "../../store/actions.ts";
+import { EditorType } from '../../store/EditorType.ts';
+import { PresentationType } from '../../store/PresentationType.ts';
+import { SlideType } from '../../store/PresentationType.ts';
 
 const ajv = new Ajv(); 
 const validatePresentation = ajv.compile(PresentationSchema);
 
-type TopPanelProps = {
-    title: string,
-}
+function TopPanel() {
 
-function TopPanel({title}: TopPanelProps) {
+    const dispatch = useDispatch(); 
+    const editor   = useSelector((state: RootState) => state.editor);
 
     const [colorPickerVisible, setColorPickerVisible] = React.useState(false)
-    const [color, setColor] = React.useState(getSelection(editor)!!.background)
+    const [color, setColor] = React.useState(
+        editor.presentation.slides.find((value: SlideType) => editor.selection?.selectedSlideId === value.id)!.background
+    )
 
     function onImportDocument(jsonSchema: string) {
-        const presentation: PresentationType = JSON.parse(jsonSchema);
-        if (validatePresentation(presentation)) {
-            dispatch(() => {
-                return {
-                    presentation: presentation,
-                    selection: { selectedSlideId: presentation.slides[0].id },
-                    objectId: null
-                }
-            });
+        const imported: PresentationType = JSON.parse(jsonSchema);
+        if (validatePresentation(imported)) {
+            const importedEditor: EditorType = {
+                presentation: imported,
+                selection: { selectedSlideId: imported.slides[0].id },
+                objectId: null
+            }
+            dispatch(actions.setEditor(importedEditor));
         } else {
             alert('Could not import presentation: Invalid schema');
         }
-    }
+    } 
 
     function onExportDocument() {
-        const editor = getEditor();
         const a = document.createElement('a');
         a.download = editor.presentation.title;
-        console.log(`${editor.presentation.title}`)
         a.href = URL.createObjectURL(new Blob([JSON.stringify(editor.presentation)], { type: 'application/json' }));
         a.addEventListener('click', (e) => {
             setTimeout(() => URL.revokeObjectURL(a.href), 30 * 1000);
@@ -56,38 +49,41 @@ function TopPanel({title}: TopPanelProps) {
     }
 
     function onToggleColorPickerVisibility() {
-        setColor(getSelection(getEditor())!!.background)
+        setColor(editor.presentation.slides.find((value: SlideType) => editor.selection?.selectedSlideId === value.id)!.background)
         setColorPickerVisible(prevState => !prevState)
     }
 
     function onAddSlide() {
-        dispatch(addSlide)
+        dispatch(actions.addSlide())
     }
 
     function onRemoveSlide() {
-        dispatch(removeSlide)
+        dispatch(actions.removeSlide())
     }
 
     function onRemoveObject() {
-        dispatch(removeObject)
+        dispatch(actions.removeSlideObject())
     }
 
     function onAddTextObject() {
-        dispatch(addTextObject, {x: 100, y: 100})
+        dispatch(actions.addText({ x: 100, y: 100}));
     }
 
     function onAddImageObject(path: string) {
-        dispatch(addImageObject, path)
+        dispatch(actions.addImage(path))
     }
 
     const onTitleChange: React.ChangeEventHandler = (event) => {
-        dispatch(renamePresentationTitle, (event.target as HTMLInputElement).value)
+        dispatch(actions.renamePresentation((event.target as HTMLInputElement).value));
     }
 
     const onBackgroundColorChange: React.ChangeEventHandler = (event) => {
+        dispatch(actions.setSlideBackground((event.target as HTMLInputElement).value));
+        setColor((event.target as HTMLInputElement).value);
+        /*
         const value = (event.target as HTMLInputElement).value
         dispatch(changeSlideBackgroundColor, value)
-        setColor(value)
+        setColor(value) */
     }
 
     const onFileSelected = (
@@ -112,10 +108,9 @@ function TopPanel({title}: TopPanelProps) {
         }
         input.value = '';
     };
-    
     return (
         <header className={styles.topPanel}>
-            <input className={styles.title} type="text" defaultValue={title} onChange={onTitleChange}/>
+            <input className={styles.title} type="text" defaultValue={editor.presentation.title} onChange={onTitleChange}/>
             <ul className={styles.actions}>
                 <li className={styles.action}><button className={styles.button} onClick={onAddSlide}>{'Add slide'}</button></li>
                 <li className={styles.action}><button className={styles.button} onClick={onRemoveSlide}>{'Remove slide'}</button></li>
