@@ -136,8 +136,8 @@ function setObjectSelection(editor: EditorType, id: string): EditorType {
 }
 
 function setSlideBackgroundColor(editor: EditorType, newColor: string): EditorType {
-    const currentSlide = getSelection(editor) as SlideType
-    currentSlide.background = newColor
+    const currentSlide = getSelection(editor) as SlideType;
+    currentSlide.background = newColor;
     return { ...editor }
 }
 

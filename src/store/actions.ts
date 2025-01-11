@@ -67,7 +67,7 @@ export const setObjectSelection = (objId: string) => ({
 });
 
 export const setSlideBackground = (newColor: string) => ({
-    type: ACTION_REMOVE_SLIDE_OBJECT,
+    type: ACTION_SET_SLIDE_BACKGROUND,
     payload: newColor
 });
 
