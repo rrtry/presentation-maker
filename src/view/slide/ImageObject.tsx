@@ -53,6 +53,7 @@ function ImageObject({
     if (scale !== 1) {
         imageObjectStyles.pointerEvents = "none";
         imageObjectStyles.cursor = "default";
+        imageObjectStyles.border = undefined;
     }
 
     return (
@@ -66,7 +67,7 @@ function ImageObject({
             src={imageObject.src}
             style={{ width: "100%", height: "100%" }}
         />
-        {isSelected && ResizeHandles(handleResizeStart)}
+        {isSelected && scale == 1 && ResizeHandles(handleResizeStart)}
         </div>
     );
 }

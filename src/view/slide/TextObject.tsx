@@ -59,14 +59,14 @@ function TextObject({
         textBoxStyles.border = '2px solid #0b57d0';
     }
     if (scale != 1) {
+        textBoxStyles.border = undefined;
         textBoxStyles.pointerEvents = "none";
         textBoxStyles.cursor = "default";
     }
-
     return (
         <div style={textBoxStyles} onClick={onClick} onMouseDown={handleMouseDown}>
             {textObject.text}
-            {isSelected && ResizeHandles(handleResizeStart)}
+            {isSelected && scale == 1 && ResizeHandles(handleResizeStart)}
         </div> 
     );
 }
