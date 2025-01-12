@@ -11,13 +11,14 @@ function getLastItem(stack: Array<EditorType>): EditorType {
 }
 
 function initHistory(store: Store<{ editor: EditorType }>): HistoryType {
+
     const undoStack: Array<EditorType> = [];
     let redoStack: Array<EditorType> = [];
 
-    let previousEditor = store.getState().editor; // Access the editor slice
+    let previousEditor = store.getState().editor;
 
     store.subscribe(() => {
-        const editor = store.getState().editor; // Access the editor slice
+        const editor = store.getState().editor;
         if (!undoStack.length || previousEditor.presentation !== editor.presentation) {
             if (editor === getLastItem(undoStack)) {
                 undoStack.pop();

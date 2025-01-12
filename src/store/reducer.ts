@@ -86,46 +86,77 @@ function setSlideSelection(editor: EditorType, slideId: string) {
     }
 }
 
-function addTextObject(editor: EditorType, pos: {x: number, y: number}): EditorType {
+function addTextObject(editor: EditorType, pos: { x: number; y: number }): EditorType {
     const textObject: TextObjectType = {
         id: self.crypto.randomUUID(),
         x: pos.x,
         y: pos.y,
-        width:  400,
+        width: 400,
         height: 400,
         fontSize: 50,
         type: "text",
         text: "Sample text",
         fontFamily: "cursive",
-        fontColor:  "White"
-    }
-    const currentSlide   = getSelection(editor) as SlideType;
-    currentSlide.objects = currentSlide?.objects.concat(textObject)
-    return { ...editor } 
+        fontColor: "White",
+    };
+
+    const updatedSlides = editor.presentation.slides.map(slide =>
+        slide.id === editor.selection?.selectedSlideId
+            ? { ...slide, objects: [...slide.objects, textObject] }
+            : slide
+    );
+
+    return {
+        ...editor,
+        presentation: {
+            ...editor.presentation,
+            slides: updatedSlides,
+        },
+    };
 }
 
 function addImageObject(editor: EditorType, data: string): EditorType {
-    const currentSlide = getSelection(editor) as SlideType
+
     const imgObject: ImageObjectType = {
         id: self.crypto.randomUUID(),
         x: 100,
         y: 100,
-        width:  SLIDE_WIDTH / 2,
+        width: SLIDE_WIDTH / 2,
         height: SLIDE_HEIGHT / 2,
-        type: 'image',
+        type: "image",
         src: data,
     };
-    currentSlide.objects = currentSlide?.objects.concat(imgObject)
-    return { ...editor }
+
+    const updatedSlides = editor.presentation.slides.map(slide =>
+        slide.id === editor.selection?.selectedSlideId
+            ? { ...slide, objects: [...slide.objects, imgObject] }
+            : slide
+    );
+
+    return {
+        ...editor,
+        presentation: {
+            ...editor.presentation,
+            slides: updatedSlides,
+        },
+    };
 }
 
 function removeObject(editor: EditorType): EditorType {
-    const selectedSlide   = getSelection(editor) as SlideType
-    selectedSlide.objects = selectedSlide.objects.filter(obj => obj.id !== editor.objectId)
-    return { 
+    const updatedSlides = editor.presentation.slides.map(slide =>
+        slide.id === editor.selection?.selectedSlideId
+            ? { ...slide, objects: slide.objects.filter(obj => obj.id !== editor.objectId) }
+            : slide
+    );
+
+    return {
         ...editor,
-        objectId: null
-    }
+        presentation: {
+            ...editor.presentation,
+            slides: updatedSlides,
+        },
+        objectId: null,
+    };
 }
 
 function setObjectSelection(editor: EditorType, id: string): EditorType {
@@ -136,9 +167,19 @@ function setObjectSelection(editor: EditorType, id: string): EditorType {
 }
 
 function setSlideBackgroundColor(editor: EditorType, newColor: string): EditorType {
-    const currentSlide = getSelection(editor) as SlideType;
-    currentSlide.background = newColor;
-    return { ...editor }
+    const updatedSlides = editor.presentation.slides.map(slide =>
+        slide.id === editor.selection?.selectedSlideId
+            ? { ...slide, background: newColor }
+            : slide
+    );
+
+    return {
+        ...editor,
+        presentation: {
+            ...editor.presentation,
+            slides: updatedSlides,
+        },
+    };
 }
 
 function updateObjectPosition(editor: EditorType, updatedObj: {
@@ -211,7 +252,7 @@ const editorReducer = (state: EditorType = editor, action: any): EditorType => {
             }
         case ACTION_REORDER_SLIDES:
             return reoderSlides(
-                editor, 
+                state, 
                 action.payload.slides, 
                 action.payload.hoverIndex, 
                 action.payload.dragIndex
