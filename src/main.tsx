@@ -2,23 +2,38 @@ import App from './App.tsx';
 import './index.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import { store } from './store/store.ts';
 import { initHistory } from './history/history.ts';
-/*
-function restoreEditor() {
-    const storageItem = localStorage.getItem(STORAGE_KEY);
-    if (storageItem !== null) {
-        setEditor(JSON.parse(storageItem), false);
-    }
-} 
+import { useEffect } from 'react';
+import * as action from './store/actions.ts';
 
-restoreEditor() */
+export const STORAGE_KEY = 'editor';
+
+function RestoreEditor() {
+
+    const dispatch = useDispatch();
+    const restoreEditor = () => {
+        const storageItem = localStorage.getItem('editor');
+        if (storageItem !== null) {
+            console.log(`RestoreEditor: ${storageItem}`);
+            dispatch(action.setEditor(JSON.parse(storageItem)));
+        }
+    };
+
+    useEffect(() => {
+        restoreEditor();
+    }, [dispatch]);
+
+    return null;
+}
+
 const root = createRoot(document.getElementById('root')!)
 function render() {
     root.render(
         <StrictMode>
             <Provider store={store}>
+                <RestoreEditor/>
                 <App history={initHistory(store)}/>
             </Provider>
         </StrictMode>

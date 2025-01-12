@@ -25,6 +25,7 @@ import {
  } from '../view/slide/Slide.tsx';
 
 import { editor } from './data';
+import { STORAGE_KEY } from '../main.tsx';
 
 function addSlide(state: EditorType): EditorType {
     const newSlideId = self.crypto.randomUUID();
@@ -241,47 +242,63 @@ function reoderSlides(
 }
 
 const editorReducer = (state: EditorType = editor, action: any): EditorType => {
+    let newState;
     switch (action.type) {
         case ACTION_RENAME_PRESENTATION:
-            return { 
+            newState = { 
                 ...state,
                 presentation: {
                     ...state.presentation,
                     title: action.payload
                 }
             }
+            break;
         case ACTION_REORDER_SLIDES:
-            return reoderSlides(
+            newState = reoderSlides(
                 state, 
                 action.payload.slides, 
                 action.payload.hoverIndex, 
                 action.payload.dragIndex
             );
+            break;
         case ACTION_SET_EDITOR:
-            return action.payload;
+            newState = action.payload;
+            break;
         case ACTION_ADD_SLIDE:
-            return addSlide(state);
+            newState = addSlide(state);
+            break;
         case ACTION_REMOVE_SLIDE:
-            return removeSlide(state);
+            newState = removeSlide(state);
+            break;
         case ACTION_SET_SLIDE_SELECTION:
-            return setSlideSelection(state, action.payload);
+            newState = setSlideSelection(state, action.payload);
+            break;
         case ACTION_ADD_TEXT_OBJECT:
-            return addTextObject(state, action.payload);
+            newState = addTextObject(state, action.payload);
+            break;
         case ACTION_ADD_IMAGE_OBJECT:
-            return addImageObject(state, action.payload);
+            newState = addImageObject(state, action.payload);
+            break;
         case ACTION_REMOVE_SLIDE_OBJECT:
-            return removeObject(state);
+            newState = removeObject(state);
+            break;
         case ACTION_SET_OBJECT_SELECTION:
-            return setObjectSelection(state, action.payload);
+            newState = setObjectSelection(state, action.payload);
+            break;
         case ACTION_SET_SLIDE_BACKGROUND:
-            return setSlideBackgroundColor(state, action.payload);
+            newState = setSlideBackgroundColor(state, action.payload);
+            break;
         case ACTION_UPDATE_OBJECT_POS:
-            return updateObjectPosition(state, action.payload);
+            newState = updateObjectPosition(state, action.payload);
+            break;
         case ACTION_UPDATE_OBJECT_SIZE:
-            return updateObjectSize(state, action.payload);
+            newState = updateObjectSize(state, action.payload);
+            break;
         default:
             return state;
     }
+    localStorage.setItem('editor', JSON.stringify(newState));
+    return newState;
 };
 
 export default editorReducer;

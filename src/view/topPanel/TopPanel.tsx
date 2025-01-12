@@ -11,6 +11,7 @@ import { EditorType } from '../../store/EditorType.ts';
 import { PresentationType } from '../../store/PresentationType.ts';
 import { SlideType } from '../../store/PresentationType.ts';
 import { HistoryContext } from '../slide/historyContext.ts';
+import exportToPDF from '../../store/exportToPDF.ts';
 
 const ajv = new Ajv(); 
 const validatePresentation = ajv.compile(PresentationSchema);
@@ -64,6 +65,10 @@ function TopPanel() {
         a.click();
     }
 
+    function onExportToPDF() {
+        exportToPDF(editor.presentation);
+    }
+
     function onToggleColorPickerVisibility() {
         setColor(editor.presentation.slides.find((value: SlideType) => editor.selection?.selectedSlideId === value.id)!.background)
         setColorPickerVisible(prevState => !prevState)
@@ -96,10 +101,6 @@ function TopPanel() {
     const onBackgroundColorChange: React.ChangeEventHandler = (event) => {
         dispatch(actions.setSlideBackground((event.target as HTMLInputElement).value));
         setColor((event.target as HTMLInputElement).value);
-        /*
-        const value = (event.target as HTMLInputElement).value
-        dispatch(changeSlideBackgroundColor, value)
-        setColor(value) */
     }
 
     const onFileSelected = (
@@ -165,6 +166,7 @@ function TopPanel() {
                 </li>
                 <li className={styles.action}><button className={styles.button} onClick={onUndo}>{'Undo'}</button></li>
                 <li className={styles.action}><button className={styles.button} onClick={onRedo}>{'Redo'}</button></li>
+                <li className={styles.action}><button className={styles.button} onClick={onExportToPDF}>{'Export to PDF'}</button></li>
             </ul>
         </header>
     )
