@@ -8,5 +8,5 @@ const defaultHistory: HistoryType = {
 const HistoryContext: React.Context<HistoryType> = React.createContext(defaultHistory)
 
 export {
-    HistoryContext,
+    HistoryContext
 }

@@ -10,6 +10,7 @@ import * as actions from "../../store/actions.ts";
 import { EditorType } from '../../store/EditorType.ts';
 import { PresentationType } from '../../store/PresentationType.ts';
 import { SlideType } from '../../store/PresentationType.ts';
+import { HistoryContext } from '../slide/historyContext.ts';
 
 const ajv = new Ajv(); 
 const validatePresentation = ajv.compile(PresentationSchema);
@@ -18,11 +19,26 @@ function TopPanel() {
 
     const dispatch = useDispatch(); 
     const editor   = useSelector((state: RootState) => state.editor);
+    const history = React.useContext(HistoryContext);
 
     const [colorPickerVisible, setColorPickerVisible] = React.useState(false)
     const [color, setColor] = React.useState(
         editor.presentation.slides.find((value: SlideType) => editor.selection?.selectedSlideId === value.id)!.background
     )
+
+    function onUndo() {
+        const newEditor = history.undo();
+        if (newEditor) {
+            dispatch(actions.setEditor(newEditor));
+        }
+    }
+
+    function onRedo() {
+        const newEditor = history.redo();
+        if (newEditor) {
+            dispatch(actions.setEditor(newEditor));
+        }
+    }
 
     function onImportDocument(jsonSchema: string) {
         const imported: PresentationType = JSON.parse(jsonSchema);
@@ -147,6 +163,8 @@ function TopPanel() {
                         />
                     </button>
                 </li>
+                <li className={styles.action}><button className={styles.button} onClick={onUndo}>{'Undo'}</button></li>
+                <li className={styles.action}><button className={styles.button} onClick={onRedo}>{'Redo'}</button></li>
             </ul>
         </header>
     )

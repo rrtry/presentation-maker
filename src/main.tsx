@@ -4,7 +4,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { store } from './store/store.ts';
-
+import { initHistory } from './history/history.ts';
 /*
 function restoreEditor() {
     const storageItem = localStorage.getItem(STORAGE_KEY);
@@ -19,7 +19,7 @@ function render() {
     root.render(
         <StrictMode>
             <Provider store={store}>
-                <App/>
+                <App history={initHistory(store)}/>
             </Provider>
         </StrictMode>
     );

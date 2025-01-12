@@ -2,52 +2,49 @@ import { Store } from "redux";
 import { EditorType } from "../store/EditorType";
 
 type HistoryType = {
-    undo: () => EditorType | undefined,
-    redo: () => EditorType | undefined,
-}
+    undo: () => EditorType | undefined;
+    redo: () => EditorType | undefined;
+};
 
 function getLastItem(stack: Array<EditorType>): EditorType {
-    return stack[stack.length - 1]
-} 
+    return stack[stack.length - 1];
+}
 
-function initHistory(store: Store<EditorType>): HistoryType {
-    const undoStack: Array<EditorType> = []
-    let redoStack: Array<EditorType> = []
+function initHistory(store: Store<{ editor: EditorType }>): HistoryType {
+    const undoStack: Array<EditorType> = [];
+    let redoStack: Array<EditorType> = [];
 
-    let previousEditor = store.getState()
+    let previousEditor = store.getState().editor; // Access the editor slice
 
     store.subscribe(() => {
-        const editor = store.getState()
-        if (!undoStack.length || previousEditor.presentation != editor.presentation) {
-            if (editor == getLastItem(undoStack)) {
-                undoStack.pop()
-                redoStack.push(previousEditor)
-            } else if (editor == getLastItem(redoStack)) {
-                redoStack.pop()
-                undoStack.push(previousEditor)
+        const editor = store.getState().editor; // Access the editor slice
+        if (!undoStack.length || previousEditor.presentation !== editor.presentation) {
+            if (editor === getLastItem(undoStack)) {
+                undoStack.pop();
+                redoStack.push(previousEditor);
+            } else if (editor === getLastItem(redoStack)) {
+                redoStack.pop();
+                undoStack.push(previousEditor);
             } else {
-                undoStack.push(previousEditor)
-                redoStack = []
+                undoStack.push(previousEditor);
+                redoStack = [];
             }
         }
-        previousEditor = editor
-    })
+        previousEditor = editor;
+    });
 
     function undo() {
-        return getLastItem(undoStack)
+        return getLastItem(undoStack);
     }
 
     function redo() {
-        return getLastItem(redoStack)
+        return getLastItem(redoStack);
     }
 
     return {
         undo,
         redo,
-    }
+    };
 }
 
-export {
-    type HistoryType,
-    initHistory
-}
+export { type HistoryType, initHistory };

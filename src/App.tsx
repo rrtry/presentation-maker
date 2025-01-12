@@ -4,10 +4,15 @@ import { TopPanel } from "./view/topPanel/TopPanel.tsx";
 import { Workspace } from "./view/Workspace.tsx";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { HistoryType } from './utils/history.ts';
+
+import { HistoryType } from './history/history.ts';
 import { HistoryContext } from './view/slide/historyContext.ts';
 
-function App() {
+type AppProps = {
+    history: HistoryType,
+}
+
+function App({history}: AppProps) {
     return (
         <HistoryContext.Provider value={history}>
             <DndProvider backend={HTML5Backend}>

@@ -217,7 +217,7 @@ const editorReducer = (state: EditorType = editor, action: any): EditorType => {
                 action.payload.dragIndex
             );
         case ACTION_SET_EDITOR:
-            return { ...action.payload }
+            return action.payload;
         case ACTION_ADD_SLIDE:
             return addSlide(state);
         case ACTION_REMOVE_SLIDE:
